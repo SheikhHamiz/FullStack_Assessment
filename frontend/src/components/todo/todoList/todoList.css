@@ -1,0 +1,13 @@
+table {
+    border-collapse: collapse;
+    width: 90%;
+    margin-inline: 5%;
+}
+td{
+    border: 1px solid black;
+    padding: 1rem;
+}
+thead > tr {
+    background-color: rgb(42, 128, 99);
+    color: white;
+}

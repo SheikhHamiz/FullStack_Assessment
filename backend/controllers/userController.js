@@ -1,19 +1,9 @@
 const User = require("../models/User");
-const Todo = require("../models/Todo");
 const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcrypt");
 
-const getAllUsers = asyncHandler(async (req, res) => {
-    const users =  await User.find().select("-password").lean();
-    if(!users) {
-        return res.status(400).json({ message: "No user found"});
-    }
-    res.json(users);
-});
-
-const createUser = asyncHandler(async (req, res) => {
-    const {username , password, roles} = req.body;
-    if(!username || !password || !Array.isArray(roles) || !roles.length) {
+const registerUser = asyncHandler(async (req, res) => {
+    const {username , password} = req.body;
+    if(!username || !password) {
         return res.status(400).json({message: "All fields required"});
     }
     const duplicate = await User.findOne({username}).lean().exec();
@@ -21,63 +11,35 @@ const createUser = asyncHandler(async (req, res) => {
     if(duplicate) {
         return res.status(409).json({message: "Duplicate user"});
     }
-    const hashpassword = await bcrypt.hash(password,10);
-    const userObject = {username, "password":hashpassword, roles};
-    const user = await User.create(userObject);
+    const user = await User.create(user);
+    const token = btoa(`${username}:${password}`);
     if(user) {
-        res.status(201).json(`New user ${username} created`);
+        const {_id} = user;
+        res.status(201).json({token,_id});
     } else {
         res.status(400).json({message:"Invalid user data"});
     }
 });
-
-const updateUser = asyncHandler(async (req, res) => {
-    const {id, username , password, roles} = req.body;
-    if(!id || !username || !password || !Array.isArray(roles) || !roles.length || typeof active !== "boolean") {
+const loginUser = asyncHandler(async (req,res) => {
+    const {username , password} = req.body;
+    if(!username || !password) {
         return res.status(400).json({message: "All fields required"});
     }
-    const user = await User.findById(id).exec();
+    const user = await User.findOne({username}).lean().exec();
     if(!user) {
-        res.status(400).json({message:"User not found"});
+        return res.status(409).json({message: "wrong  username"});
     }
-    const duplicate = await User.findOne({username}).lean().exec();
-    if(duplicate && duplicate?._id.toString() !== id) {
-        return res.status(409).json({ message: "Duplicate username" });
+    if(password !== user.password) {
+        return res.status(409).json({message: "wrong password"});
+    } else {
+        const token = btoa(`${username}:${password}`);
+        const {_id} = user;
+        return res.status(200).json({token,_id});
     }
-    user.username = username;
-    user.roles = roles;
-    user.active = active;
+})
 
-    if (password) {
-        user.password = await bcrypt.hash(password, 10);
-    }
-
-    const updatedUser = await user.save();
-
-    res.json(`${updatedUser.username} updated`);
-});
-
-const deleteUser = asyncHandler(async (req, res) => {
-    const {id} = req.body;
-    if(!id) {
-        return res.status(400).json({message: "UserID required"});
-    }
-    const todos = await Todo.find({user:id}).exec();
-    if(todos?.length) {
-        todos.delete();
-    }
-    const user = await User.findById(id).exec();
-    if(!user) {
-        return res.status(400).json({message: "User not found"});
-    }
-    const result = await user.deleteOne();
-    const reply = `Username ${result.username} with ID ${result._id} deleted`;
-    res.json(reply);
-});
 
 module.exports = {
-    getAllUsers,
-    createUser,
-    updateUser,
-    deleteUser
+    registerUser,
+    loginUser
 };

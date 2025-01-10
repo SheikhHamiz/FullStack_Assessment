@@ -1,0 +1,15 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin-inline: 25%;
+}
+.form input, .form select {
+    margin-bottom: 1rem;
+}
+#title {
+    height: 25px;
+}
+#description {
+    height: 50px;
+}
