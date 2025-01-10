@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createTodosOfuser, getTodoById, updateTodosOfuser } from "../../../service/todoService";
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import "./addTodo.css";
 import { useAuth } from "../../../auth/authContext";
 
@@ -10,8 +10,10 @@ const AddTodo = () => {
     const [description, setDescription] = useState("");
 
     const {user} = useAuth();
+    const navigate =useNavigate();
 
     useEffect(() => {
+        console.log(id);
         if(id != -1) {
             getTodoById(id).then(
                 res => {
@@ -20,16 +22,17 @@ const AddTodo = () => {
                 }
             )
         }
-    })
+    },[])
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const todo = { user,title, description};
         if(id == -1) {
-            createTodosOfuser(todo).then( res => console.log(res.data));
+            createTodosOfuser(todo).then( res => console.log(res.data)).then(res => navigate("/"));
         }else {
-            updateTodosOfuser({id, title,description});
+            updateTodosOfuser({id, title,description}).then(res => navigate("/"));
         }
+        
     }
     const handleTitle = (e) => {
         setTitle(e.target.value);
@@ -40,9 +43,9 @@ const AddTodo = () => {
     return (
         <form onSubmit={(e) => handleSubmit(e)} className="form">
             <label htmlFor="title">Title</label>
-            <input type="text" name="title" id="title" onChange={(e) => handleTitle(e)} />
+            <input type="text" name="title" id="title" value={title} onChange={(e) => handleTitle(e)} />
             <label htmlFor="description">Description</label>
-            <input type="text" name="description" id="description" onChange={(e) => handleDescription(e)} />
+            <input type="text" name="description" id="description" value={description} onChange={(e) => handleDescription(e)} />
             <button type="submit" className="btn btn-save">Submit</button>
         </form>
     );

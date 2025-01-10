@@ -1,0 +1,21 @@
+header {
+    padding-inline: 1rem;
+    background-color: rgb(242, 238, 238);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.118);
+    padding-block: 1rem;
+}
+nav > ul{
+    display: flex;
+    gap: 1rem;
+    flex-direction: row;
+    align-items: center;
+    list-style: none;
+}
+a {
+    text-decoration: none;
+    font-size: large;
+    color: black;
+}
+a:hover {
+    text-decoration: underline;
+}

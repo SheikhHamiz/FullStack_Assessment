@@ -14,7 +14,7 @@ const getAllTodosOfUser = asyncHandler(async (req, res) => {
     res.json(todos);
 });
 const getTodoById = asyncHandler( async (req,res) => {
-    const {id} = req.query;
+    const {id} = req.params;
     if(!id) {
         return res.status(400).json({message: "todo Id required"});
     }
@@ -107,6 +107,7 @@ const deleteTodo = asyncHandler(async (req, res) => {
 
 module.exports = {
     getAllTodosOfUser,
+    getTodoById,
     getConditionalTodosOfUser,
     createTodoOfUser,
     updateTodoStatus,

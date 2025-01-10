@@ -1,9 +1,11 @@
 import "./todoList.css";
-import { getAllTodosOfuser, getConditionalUserTodosOfUser, updateStatusOfTodo } from "../../../service/todoService";
+import { deleteTodo, getAllTodosOfuser, getConditionalUserTodosOfUser, updateStatusOfTodo } from "../../../service/todoService";
 import { useState, useEffect } from "react";
+import { useAuth } from "../../../auth/authContext";
+import {useNavigate} from "react-router-dom";
 
 const TodoList = () => {
-     const user = "677ea976c6559342e0fa9b5d";
+    const {user} = useAuth();
     const [todos, setTodos] = useState([]);
     const [allTodos, setAllTodos] = useState([]);
     const [completedTodos, setCompletedTodos] = useState([]);
@@ -11,6 +13,7 @@ const TodoList = () => {
     const [refreshKey, setRefreshKey] = useState(0);
     const options = ["All", "Completed", "Pending"];
     const [kind, setKind] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         setKind("All");
@@ -25,6 +28,10 @@ const TodoList = () => {
             setPendingTodos([...res.data]);
         });
     },[refreshKey]);
+
+    const handleDelete = (id) => {
+        deleteTodo(id).then(res => setRefreshKey(k => k+1));
+    }
 
     const handleFilter = (e) => {
         switch(e.target.value) {
@@ -78,8 +85,8 @@ const TodoList = () => {
                             <td>
                                 <input type="checkbox" name="done" id="done" checked={t.done} onClick={(e)=> handleStatus(e,t._id,)}/>
                             </td>
-                            <td><button className="btn btn-edit">Edit</button></td>
-                            <td><button className="btn btn-delete">Delete</button></td>
+                            <td><button className="btn btn-edit" onClick={() => navigate(`/addOrUpdate/${t._id}`)} >Edit</button></td>
+                            <td><button className="btn btn-delete" onClick={() => handleDelete(t._id) }>Delete</button></td>
                         </tr>
                     ))
                 }

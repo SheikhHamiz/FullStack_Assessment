@@ -7,12 +7,17 @@ router.route("/")
       .get(todoController.getAllTodosOfUser)
       .post(todoController.createTodoOfUser)
       .put(todoController.updateTodo)
-      .patch(todoController.updateTodoStatus)
+      .patch(todoController.updateTodoStatus);
+
+router.route("/completed")
+      .get(todoController.getConditionalTodosOfUser);      
       
 router.route("/:id")
+      .get(todoController.getTodoById)
       .delete(todoController.deleteTodo);
-router.route("/completed")
-      .get(todoController.getConditionalTodosOfUser);
+      
+      
+
 
 
 module.exports = router;

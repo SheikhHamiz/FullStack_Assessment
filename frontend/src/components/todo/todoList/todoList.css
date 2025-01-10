@@ -11,3 +11,6 @@ thead > tr {
     background-color: rgb(42, 128, 99);
     color: white;
 }
+select {
+    margin: 1rem;
+}

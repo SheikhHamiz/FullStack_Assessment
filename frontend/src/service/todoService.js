@@ -7,7 +7,7 @@ export const getConditionalUserTodosOfUser = (user,done) => {
     return api.get(`${url}/completed`,{params:{user,done}});
 }
 export const getTodoById = (id) => {
-    return api.get(url,{params:{id}});
+    return api.get(`${url}/${id}`);
 }
 export const createTodosOfuser = (todo) => {
     return api.post(url,todo);
@@ -20,5 +20,5 @@ export const updateStatusOfTodo = (id,done) => {
 }
 
 export const deleteTodo = (id) => {
-    return api.get(`${url}/${id}`);
+    return api.delete(`${url}/${id}`);
 }
